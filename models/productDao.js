@@ -1,9 +1,8 @@
 const { appDataSource } = require("./datasource")
 
-const getProducts = async () =>{
+const getProducts = async (brandName,scentName) =>{
     return await appDataSource.query(`
-    SELECT * FROM products 
-    `)
+    SELECT * FROM products WHERE brand_id = '${brandName}' or scent_id = '${scentName}'`)
 }
 
 const getProduct = async (id) =>{
