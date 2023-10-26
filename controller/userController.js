@@ -39,7 +39,21 @@ const signIn = async(req,res) => {
 const list = async(req,res) => {
     try{
         const userList = await userService.list()
-        res.status(200).json({ userList })
+        res.status(200).json(userList)
+    }catch(err){
+        console.log(err)
+        res.status(err.status || 500).json({message : err.message})
+    }
+}
+
+const oneList = async(req,res) => {
+    try{
+        const userEmail = req.params.userEmail
+        if(!req.params.userEmail){
+            return res.status(400).json({message : 'KEY_ERROR'})
+        }
+        const oneList = await userService.oneList( userEmail )
+        res.status(200).json( oneList)
     }catch(err){
         console.log(err)
         res.status(err.status || 500).json({message : err.message})
@@ -59,4 +73,4 @@ const addPoint = async(req,res) => {
     }
 }
 
-module.exports = { signUp, signIn, list, addPoint }
+module.exports = { signUp, signIn, list, oneList, addPoint }
