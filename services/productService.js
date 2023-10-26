@@ -14,9 +14,13 @@ const createProduct = async(name,price,description,brand_id,scent_id) =>{
     const product = await productDao.createProduct(name,price,description,brand_id,scent_id)
     return product
 }
+const deleteProduct = async(id) =>{
+    const product = await productDao.deleteProduct(id)
+    return product
+} 
 
 
 
 module.exports = {
-    getProducts,getProduct,createProduct
+    getProducts,getProduct,createProduct,deleteProduct
 }

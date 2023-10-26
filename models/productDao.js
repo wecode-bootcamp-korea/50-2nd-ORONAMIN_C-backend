@@ -16,6 +16,12 @@ const createProduct = async(name,price,description,brand_id,scent_id) =>{
     `)
 }
 
+const deleteProduct  = async(id) => {
+    return await appDataSource.query(`
+    delete from products where id = '${id}'
+    `)
+}
+
 module.exports = {
-    getProducts,getProduct,createProduct
+    getProducts,getProduct,createProduct,deleteProduct
 }

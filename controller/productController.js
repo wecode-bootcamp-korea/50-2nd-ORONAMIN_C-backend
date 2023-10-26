@@ -29,13 +29,24 @@ const getProduct = async(req,res) => {
 const createProduct = async(req,res) =>{
     const {name,price,description,brand_id,scent_id} = req.body
     try{
-        const product = await productService.createProduct(name,price,description,brand_id,scent_id)
+        await productService.createProduct(name,price,description,brand_id,scent_id)
         res.status(200).json({message: "등록완료~!"})
 
     }catch(err){
         res.status(404).json({message: "실패.."})
     }
 }
+
+const deleteProduct = async(req,res)=>{
+    const id = req.params.id
+    try{
+        await productService.deleteProduct(id)
+        res.status(204).json({message:"헤헷삭제!"})
+    }catch(err){
+        res.status(404).json({message:"왜 안될까...?"})
+
+    }
+}
 module.exports = {
-    productAll,getProduct,createProduct
+    productAll,getProduct,createProduct,deleteProduct
 }
