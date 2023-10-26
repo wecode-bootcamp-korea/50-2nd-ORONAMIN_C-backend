@@ -4,7 +4,7 @@ const middleErr = require('../middleware/error')
 const existCheck = async( userEmail ) => {
     try{
         const result = appDataSource.query(`
-            SELECT id, email, nickname, password, admin_status FROM users WHERE email = ?
+            SELECT * FROM users WHERE email = ?
         `, [ userEmail ]
         )
         return result

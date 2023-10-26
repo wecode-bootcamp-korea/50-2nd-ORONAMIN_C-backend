@@ -44,6 +44,13 @@ const list = async() => {
     return userList
 }
 
+const oneList = async( userEmali ) =>{
+    const result = await userDao.existCheck( userEmali )
+    return {email : result[0].email,
+    nickname : result[0].nickname,
+    result : result[0].point}
+}
+
 const addPoint = async(token) => {
     const verify = await userDao.verifyUser( token.id, token.email, token.nickname, token.status )
     if(verify.length==0){
@@ -52,4 +59,4 @@ const addPoint = async(token) => {
     return await userDao.addPoint( verify[0].email )
 }
 
-module.exports = { signUp, signIn, list, addPoint }
+module.exports = { signUp, signIn, list, oneList, addPoint }
