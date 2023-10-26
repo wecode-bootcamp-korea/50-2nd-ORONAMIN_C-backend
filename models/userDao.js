@@ -1,17 +1,28 @@
 const { appDataSource } = require('./datasource')
+const middleErr = require('../middleware/error')
 
 const existCheck = async( userEmail ) => {
     try{
         const result = appDataSource.query(`
-            SELECT id, email, nickname, password FROM users WHERE email = ?
+            SELECT id, email, nickname, password, admin_status FROM users WHERE email = ?
         `, [ userEmail ]
         )
         return result
     }catch(err){
         console.log(err)
-        const error = new Error('INVALID_DATA_INPUT')
-        error.statusCode = 500
-        throw error
+        middleErr.error(500, 'INVALID_DATA_INPUT')
+    }
+}
+const verifyUser = async( userId, userEmail, userNickname, admin_status ) => {
+    try{
+        const result = appDataSource.query(`
+            SELECT id, email, nickname, admin_status FROM users
+            WHERE id = ? AND email = ? AND nickname = ? AND admin_status = ?
+        `, [userId, userEmail, userNickname, admin_status])
+        return result
+    }catch(err){
+        console.log(err)
+        middleErr.error(500, 'INVALID_DATA_INPUT')
     }
 }
 
@@ -25,9 +36,7 @@ const createUser = async ( userEmail, hashedUserPassword, userNickname, userGend
     }
     catch(err){
         console.log(err)
-        const error = new Error('INVALID_DATA_INPUT')
-        error.statusCode = 500
-        throw error
+        middleErr.error(500, 'INVALID_DATA_INPUT')
     }
 }
 
@@ -38,9 +47,7 @@ const list = async() => {
         `)
     }catch(err){
         console.log(err)
-        const error = new Error('INVALID_DATA_INPUT')
-        error.statusCode = 500
-        throw error
+        middleErr.error(500, 'INVALID_DATA_INPUT')
     }
 }
 
@@ -60,10 +67,8 @@ const addPoint = async( userEmail ) => {
         return {email : result[0].email, '당첨 포인트' : addRandomPoint, '현재 포인트' : result[0].point}
     }catch(err){
         console.log(err)
-        const error = new Error('INVALID_DATA_INPUT')
-        error.statusCode = 500
-        throw error
+        middleErr.error(500, 'INVALID_DATA_INPUT')
     }
 }
 
-module.exports = { existCheck, createUser, list, addPoint }
+module.exports = { existCheck, createUser, list, addPoint, verifyUser }

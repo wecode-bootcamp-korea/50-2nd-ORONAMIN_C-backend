@@ -35,7 +35,7 @@ const signIn = async( userEmail, userPassword ) => {
         middleErr.error(400, "비밀번호가 틀렸습니다")
     }
     const tokenData = await userDao.existCheck( userEmail )
-    const token = await middleJwt.makeToken(tokenData[0].id,tokenData[0].email,tokenData[0].nickname)
+    const token = await middleJwt.makeToken(tokenData[0].id,tokenData[0].email,tokenData[0].nickname, tokenData[0].admin_status)
     return token
 }
 
@@ -45,11 +45,11 @@ const list = async() => {
 }
 
 const addPoint = async(token) => {
-    const checkEmail = await userDao.existCheck( token.email )
-    if(checkEmail.length==0){
+    const verify = await userDao.verifyUser( token.id, token.email, token.nickname, token.status )
+    if(verify.length==0){
         middleErr.error(400, "존재하지 않는 계정입니다")
     }
-    return await userDao.addPoint( checkEmail[0].email )
+    return await userDao.addPoint( verify[0].email )
 }
 
 module.exports = { signUp, signIn, list, addPoint }
