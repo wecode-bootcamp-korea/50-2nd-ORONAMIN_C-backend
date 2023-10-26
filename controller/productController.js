@@ -15,12 +15,6 @@ const getProduct = async(req,res) => {
     const id = req.params.id
     try{
         const product = await productService.getProduct(id)
-        if(product.length === 0){
-            const err = new Error()
-            err.statusCode = 400
-            err.message = "없는 게시물입니다."
-            throw err;
-        }
         res.status(200).json({product})
     }catch(err){
         res.status(err.statusCode).json({message: err.message})
@@ -29,9 +23,11 @@ const getProduct = async(req,res) => {
 const createProduct = async(req,res) =>{
     const {name,price,description,brand_id,scent_id} = req.body
     try{
+        if(!name||!price||!description||!brand_id||!scent_id){
+            return res.status(400).json({message: "INPUT_KEY_ERROR"})
+        }
         await productService.createProduct(name,price,description,brand_id,scent_id)
         res.status(200).json({message: "등록완료~!"})
-
     }catch(err){
         res.status(404).json({message: "실패.."})
     }

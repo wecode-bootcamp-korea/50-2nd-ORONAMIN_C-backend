@@ -7,6 +7,12 @@ const getProducts = async(brandName,scentName) =>{
 
 const getProduct = async(id) =>{
     const product = await productDao.getProduct(id)
+    if(product.length === 0){
+        const err = new Error()
+        err.statusCode = 400
+        err.message = "없는 게시물입니다."
+        throw err;
+    }
     return product
 } 
 
