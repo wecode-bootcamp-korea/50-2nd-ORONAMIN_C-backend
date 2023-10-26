@@ -15,7 +15,7 @@ const existCheck = async( userEmail ) => {
 }
 const verifyUser = async( userId, userEmail, userNickname, admin_status ) => {
     try{
-        const result = appDataSource.query(`
+        const result = await appDataSource.query(`
             SELECT id, email, nickname, admin_status FROM users
             WHERE id = ? AND email = ? AND nickname = ? AND admin_status = ?
         `, [userId, userEmail, userNickname, admin_status])

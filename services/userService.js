@@ -12,7 +12,7 @@ const signUp = async( userEmail, userPassword, userNickname, userGender ) => {
     }
     const checkEmail = await userDao.existCheck( userEmail )
     if(checkEmail.length!==0){
-        middleErr.error(400, "이미 가입된 이메일 입니다")   
+        middleErr.error(400, "이미 가입된 이메일 입니다")
     }
     const hashedUserPassword = await middleHash.hash(userPassword)
     const createUser = await userDao.createUser(
