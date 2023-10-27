@@ -7,22 +7,21 @@ const getProducts = async (brandName,scentName) =>{
     brands.name as brand_name,
     images.image_source,images.product_id 
     FROM products 
-    JOIN images ON products.id = images.product_id
-    JOIN scents ON products.scent_id = scents.id
-    JOIN brands ON products.brand_id = brands.id 
+    LEFT JOIN images ON products.id = images.product_id
+    LEFT JOIN scents ON products.scent_id = scents.id
+    LEFT JOIN brands ON products.brand_id = brands.id 
     WHERE products.brand_id = '${brandName}' or products.scent_id = '${scentName}'`)
 }
-/*
-SELECT products.
-    FROM products
-    JOIN images ON products.id = images.product_id
-    JOIN scents ON products.scent_id = scents.id
-    JOIN brands ON products.brand_id = brands.id WHERE products.brand_id = '${brandName}' or products.scent_id = '${scentName}'`)
-*/
+
 
 const getProduct = async (id) =>{
     return await appDataSource.query(`
-    SELECT products.name,products.price,products.description,images.image_source from products join images on products.id = images.product_id join scents on products.scent_id = scents.id 
+    SELECT products.id,products.name,products.price,products.description,
+    images.image_source,
+    scents.name as scents_name
+    from products 
+    LEFT JOIN images on products.id = images.product_id 
+    LEFT JOIN scents on products.scent_id = scents.id 
     where products.id = ?
     `,[id])
 }

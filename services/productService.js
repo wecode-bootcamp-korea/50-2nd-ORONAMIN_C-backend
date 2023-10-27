@@ -7,6 +7,7 @@ const getProducts = async(brandName,scentName) =>{
 
 const getProduct = async(id) =>{
     const product = await productDao.getProduct(id)
+    console.log(product)
     return product
 } 
 
