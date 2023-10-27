@@ -31,7 +31,7 @@ const getImage = async (req, res) => {
     const token = req.headers.authorization.substr(7);
     const verifiedToken = await middleJwt.verifyToken(token);
 
-    if (verifiedToken[0].status != 1) {
+    if (verifiedToken.status != 1) {
       return res.status(400).json({ message: "관리자 권한이 없습니다." });
     }
 
@@ -55,7 +55,7 @@ const deleteImage = async (req, res) => {
     const token = req.headers.authorization.substr(7);
     const verifiedToken = await middleJwt.verifyToken(token);
 
-    if (verifiedToken[0].status != 1) {
+    if (verifiedToken.status != 1) {
       return res.status(400).json({ message: "관리자 권한이 없습니다." });
     }
     const imageId = req.params.imageId;
@@ -78,7 +78,7 @@ const updateImage = async (req, res) => {
     const token = req.headers.authorization.substr(7);
     const verifiedToken = await middleJwt.verifyToken(token);
 
-    if (verifiedToken[0].status != 1) {
+    if (verifiedToken.status != 1) {
       return res.status(400).json({ message: "관리자 권한이 없습니다." });
     }
     const imageId = req.params.imageId;
