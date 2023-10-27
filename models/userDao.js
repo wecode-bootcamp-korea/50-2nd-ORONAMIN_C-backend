@@ -1,5 +1,6 @@
 const { appDataSource } = require('./datasource')
 const middleErr = require('../middleware/error')
+const sqlResult = require('../util/sqlResult')
 
 const existCheck = async( userEmail ) => {
     try{
@@ -26,13 +27,19 @@ const verifyUser = async( userId, userEmail, userNickname, admin_status ) => {
     }
 }
 
-const createUser = async ( userEmail, hashedUserPassword, userNickname, userGender ) => {
+const createUser = async ( userEmail, hashedUserPassword, userNickname, userPhoneNumber, userBirthDay, userGender ) => {
     try{
-        return await appDataSource.query(`
-            INSERT INTO users(email, password, nickname, gender, point)
-            values(?,?,?,?,?)`,
-            [userEmail, hashedUserPassword,userNickname, userGender, 1000000]
+        const create = await appDataSource.query(`
+            INSERT INTO users(email, password, nickname, phone_number, birthday, gender, point)
+            values(?,?,?,?,?,?,?)`,
+            [userEmail, hashedUserPassword, userNickname, userPhoneNumber, userBirthDay, userGender, 1000000]
         )
+        // 쿼리가 정상 작동했음에도 불구하고 데이터가 수정되지 않은 경우 에러 캐치
+        if(create.insertId=0){
+            middleErr.error(500, 'DATA_INSERT_FAILED')
+        }
+        sqlResult.sqlResult(create)
+        return create
     }
     catch(err){
         console.log(err)
@@ -61,6 +68,11 @@ const addPoint = async( userEmail ) => {
         const change = await appDataSource.query(`
             update users set point = ? where email = ?
         `, [replacePoint, userEmail])
+        // 쿼리가 정상 작동했음에도 불구하고 데이터가 수정되지 않은 경우 에러 캐치
+        if(change.affectedRows=0){
+            middleErr.error(500, 'DATA_UPDATE_FAILED')
+        }
+        sqlResult.sqlResult(change)
         const result = await appDataSource.query(`
             select email, point from users where email = ?
         `, [userEmail])
