@@ -76,4 +76,22 @@ const addPoint = async(req,res) => {
     }
 }
 
-module.exports = { signUp, signIn, list, oneList, addPoint }
+const changeUserInfo = async(req,res) => {
+    try{
+        const token = req.headers.authorization.substr(7)
+        const verifiedToken = await middleJwt.verifyToken(token)
+        const changeNickname = req.body.nickname    || ""
+        const phone_number = req.body.phone_number  || ""
+        const changeBrithday = req.body.birthday    || ""
+        const changeGender = req.body.gender        || ""
+        const changeAdress = req.body.address       || ""
+        const result = await userService.changeUserInfo([verifiedToken, changeNickname, phone_number, changeBrithday, changeGender, changeAdress])
+
+        res.status(200).json({ message : 'USER_INFO_CHANGED', result})
+    }catch(err){
+        console.log(err)
+        res.status(err.status || 500).json({message : err.message})
+    }
+}
+
+module.exports = { signUp, signIn, list, oneList, addPoint, changeUserInfo }
