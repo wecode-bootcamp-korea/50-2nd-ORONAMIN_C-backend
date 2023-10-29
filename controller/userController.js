@@ -81,11 +81,14 @@ const changeUserInfo = async(req,res) => {
         const token = req.headers.authorization.substr(7)
         const verifiedToken = await middleJwt.verifyToken(token)
         const changeNickname = req.body.nickname    || ""
-        const phone_number = req.body.phone_number  || ""
-        const changeBrithday = req.body.birthday    || ""
+        const changePhone_number = req.body.phone_number  || ""
+        const changeBirthday = req.body.birthday    || ""
         const changeGender = req.body.gender        || ""
         const changeAdress = req.body.address       || ""
-        const result = await userService.changeUserInfo([verifiedToken, changeNickname, phone_number, changeBrithday, changeGender, changeAdress])
+        
+        const result = await userService.changeUserInfo(
+            verifiedToken, changeNickname, changePhone_number, changeBirthday, changeGender, changeAdress
+            )
 
         res.status(200).json({ message : 'USER_INFO_CHANGED', result})
     }catch(err){
