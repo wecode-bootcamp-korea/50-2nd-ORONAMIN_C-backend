@@ -59,13 +59,14 @@ const addPoint = async(token) => {
     return await userDao.addPoint( verify[0].email )
 }
 
-const changeUserInfo = async( data ) => {
-    const index = ['nickname', 'phone_number', 'birthday', 'gender', 'address']
-    const result = {}
-    for (i=1; i<6; i++){
-    if(data[i].length!==0){result[index[i-1]]=data[i]}
+const changeUserInfo = async( token, nickname, phone_number, birthday, gender, address ) => {
+    const verify = await userDao.verifyUser( token.id, token.email, token.nickname, token.status )
+    if(verify.length==0){
+        middleErr.error(400, "EMAIL_NOT_FOUND")
     }
-    return await userDao.changeUserInfo( result, data[0] )
+    const data = { nickname, phone_number, birthday, gender, address }
+    data.email = verify[0].email
+    return await userDao.changeUserInfo( data ) 
 }
 
 module.exports = { signUp, signIn, list, oneList, addPoint, changeUserInfo }

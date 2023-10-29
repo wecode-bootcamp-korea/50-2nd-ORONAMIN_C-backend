@@ -83,65 +83,25 @@ const addPoint = async( userEmail ) => {
     }
 }
 
-const changeUserInfo = async( result, data ) => {
+const changeUserInfo = async( data ) => {
     const index = ['nickname', 'phone_number', 'birthday', 'gender', 'address']
-    let count = 0
-    const key = []
-    const value = []
-    for (i=0; i<5; i++){
-        if(result[index[i]]){
-            key.push(index[i])
-            value.push(result[index[i]])
-            count = count+1
-        }
-    }
-    if(count===5){
-        const value2 = 'UPDATE users SET '
-                    + key[0] + ' = ' + `'${value[0]}'` + ", "
-                    + key[1] + ' = ' + `'${value[1]}'` + ", "
-                    + key[2] + ' = ' + `'${value[2]}'` + ", "
-                    + key[3] + ' = ' + `'${value[3]}'` + ", "
-                    + key[4] + ' = ' + `'${value[4]}'` 
-                    + ' WHERE email = ' + `'${data.email}'`
-        const change = await appDataSource.query( value2 )
-        sqlResult.sqlResult(change)
-    }else if(count===4){
-        const value2 = 'UPDATE users SET '
-                    + key[0] + ' = ' + `'${value[0]}'` + ", "
-                    + key[1] + ' = ' + `'${value[1]}'` + ", "
-                    + key[2] + ' = ' + `'${value[2]}'` + ", "
-                    + key[3] + ' = ' + `'${value[3]}'` 
-                    + ' WHERE email = ' + `'${data.email}'`
-        const change = await appDataSource.query( value2 )
-        sqlResult.sqlResult(change)
-    }else if(count===3){
-        const value2 = 'UPDATE users SET '
-                    + key[0] + ' = ' + `'${value[0]}'` + ", "
-                    + key[1] + ' = ' + `'${value[1]}'` + ", "
-                    + key[2] + ' = ' + `'${value[2]}'`
-                    + ' WHERE email = ' + `'${data.email}'`
-        const change = await appDataSource.query( value2 )
-        sqlResult.sqlResult(change)
-    }else if(count===2){
-        const value2 = 'UPDATE users SET '
-                    + key[0] + ' = ' + `'${value[0]}'` + ", "
-                    + key[1] + ' = ' + `'${value[1]}'`
-                    + ' WHERE email = ' + `'${data.email}'`
-        const change = await appDataSource.query( value2 )
-        sqlResult.sqlResult(change)
-    }else if(count===1){
-        const value2 = 'UPDATE users SET '
-                    + key[0] + ' = ' + `'${value[0]}'`
-                    + ' WHERE email = ' + `'${data.email}'`
-        const change = await appDataSource.query( value2 )
-        sqlResult.sqlResult(change)
-    }else if(count===0){
+    let query1 = ''
+    for (i=0; i<index.length; i++){
+        if(!data[index[i]].length==0){query1 = query1 + index[i] + ' = ' + `'${data[index[i]]}'` + ', ' }
+      }
+    if(query1.length==0){
         middleErr.error(500, 'INVALID_DATA_INPUT')
     }
+    query1 = 'UPDATE users SET ' + query1.slice(0,-2) + ' WHERE ' + `email = '${data.email}'`
+    const change = await appDataSource.query(query1)
+    if(change.affectedRows=0){
+        middleErr.error(500, 'DATA_UPDATE_FAILED')
+    }
+    sqlResult.sqlResult(change)
     const viewResult = await appDataSource.query(`
         select email, nickname, phone_number, birthday, gender, address from users where email = ?
     `, [data.email])
-    return viewResult
+    return viewResult[0]
 }
 
 module.exports = { existCheck, createUser, list, addPoint, verifyUser, changeUserInfo }
