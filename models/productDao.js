@@ -1,7 +1,7 @@
 const { appDataSource } = require("./datasource")
 const {updateQuery} = require("../util/update")
 const getProducts = async (brandName,scentName) =>{
-    return await appDataSource.query(`
+    const result =  await appDataSource.query(`
     SELECT products.id,products.name as product_name,products.price,products.description,products.brand_id,products.scent_id,products.stock,
     scents.name,scents.scent_desc,
     brands.name as brand_name,
@@ -11,7 +11,25 @@ const getProducts = async (brandName,scentName) =>{
     LEFT JOIN scents ON products.scent_id = scents.id
     LEFT JOIN brands ON products.brand_id = brands.id 
     WHERE products.brand_id = '${brandName}' or products.scent_id = '${scentName}'`)
+    
+    const scentDescMap = {};
+    
+    result.forEach((product) => {
+        const { scent_desc, ...rest } = product;
+        if (!(scent_desc in scentDescMap)) {
+          scentDescMap[scent_desc] = { scent_desc, products: [] };
+        }
+        scentDescMap[scent_desc].products.push(rest);
+      });
+    
+      const uniqueProducts = Object.values(scentDescMap).map(({ scent_desc, products }) => ({
+        scent_desc,
+        products,
+      }));
+    
+      return uniqueProducts;
 }
+
 
 
 const getProduct = async (id) =>{
