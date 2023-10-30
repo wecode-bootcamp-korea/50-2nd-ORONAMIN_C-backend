@@ -1,4 +1,5 @@
 const productDao = require('../models/productDao')
+const jwt = require('../middleware/jwt')
 
 const getProducts = async(brandName,scentName) =>{
     const productAll = await productDao.getProducts(brandName,scentName)
@@ -10,15 +11,28 @@ const getProduct = async(id) =>{
     if(product.length === 0){
         const err = new Error()
         err.statusCode = 400
-        err.message = "없는 게시물입니다."
+        err.message = "없는 상품입니다."
         throw err;
     }
     return product
 } 
 
-const createProduct = async(name,price,description,brand_id,scent_id) =>{
-    const product = await productDao.createProduct(name,price,description,brand_id,scent_id)
+const createProduct = async(productName,price,description,brandId,scentId) =>{
+    const product = await productDao.createProduct(productName,price,description,brandId,scentId)
     return product
+}
+
+const updateProduct = async(productId,productName,price,description,brandId,scentId)=>{
+    const getProduct = await productDao.getProduct(id)
+    const product = await productDao.updateProduct(productId,productName,price,description,brandId,scentId)
+    if(getProduct.length === 0){
+        const err = new Error()
+        err.statusCode = 400
+        err.message = "없는 상품입니다."
+        throw err;
+    }
+    return product 
+
 }
 const deleteProduct = async(id) =>{
     const product = await productDao.deleteProduct(id)
@@ -28,5 +42,5 @@ const deleteProduct = async(id) =>{
 
 
 module.exports = {
-    getProducts,getProduct,createProduct,deleteProduct
+    getProducts,getProduct,createProduct,deleteProduct,updateProduct
 }

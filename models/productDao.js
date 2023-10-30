@@ -1,5 +1,5 @@
 const { appDataSource } = require("./datasource")
-
+const {updateQuery} = require("../util/update")
 const getProducts = async (brandName,scentName) =>{
     return await appDataSource.query(`
     SELECT products.id,products.name as product_name,products.price,products.description,products.brand_id,products.scent_id,products.stock,
@@ -25,9 +25,9 @@ const getProduct = async (id) =>{
     where products.id = ?
     `,[id])
 }
-const createProduct = async(name,price,description,brand_id,scent_id) =>{
+const createProduct = async(productName,price,description,brandId,scentId) =>{
     return await appDataSource.query(`
-    insert into products (name,price,description,brand_id,scent_id) values('${name}',${price},'${description}',${brand_id},${scent_id})
+    insert into products (name,price,description,brand_id,scent_id) values('${productName}',${price},'${description}',${brandId},${scentId})
     `)
 }
 
@@ -36,7 +36,15 @@ const deleteProduct  = async(id) => {
     delete from products where id = '${id}'
     `)
 }
+const updateProduct = async(productId,productName,price,description,brandId,scentId)=>{
+    const updateFields = await updateQuery(productName, price, description, brandId, scentId)
+    return await appDataSource.query(`
+    update products set
+    ${updateFields}
+    WHERE id = '${productId}'
+    `)
+}
 
 module.exports = {
-    getProducts,getProduct,createProduct,deleteProduct
+    getProducts,getProduct,createProduct,deleteProduct,updateProduct
 }
