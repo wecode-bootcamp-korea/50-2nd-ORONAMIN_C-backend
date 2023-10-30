@@ -11,6 +11,10 @@ const signUp = async( userEmail, userPassword, userNickname, userPhoneNumber, us
     if(userPassword.length<10){
         middleErr.error(400, "PASSWORD_FORMAT_INCORRECT")
     }
+    console.log()
+    if(userPhoneNumber.length<13){
+        middleErr.error(400, "PHONE_NUMBER_FORMAT_INCORRECT")
+    }
     const checkEmail = await userDao.existCheck( userEmail )
     if(checkEmail.length!==0){
         middleErr.error(400, "OVERLAPPED_EMAIL")
@@ -36,7 +40,7 @@ const signIn = async( userEmail, userPassword ) => {
         middleErr.error(400, "WRONG_PASSWORD")
     }
     const tokenData = await userDao.existCheck( userEmail )
-    const token = await middleJwt.makeToken(tokenData[0].id,tokenData[0].email,tokenData[0].nickname, tokenData[0].admin_status)
+    const token = await middleJwt.makeToken(tokenData[0].id, tokenData[0].email , tokenData[0].admin_status)
     return token
 }
 
