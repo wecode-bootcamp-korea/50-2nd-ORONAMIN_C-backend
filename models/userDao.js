@@ -1,6 +1,7 @@
 const { appDataSource } = require('./datasource')
 const middleErr = require('../middleware/error')
 const sqlResult = require('../util/sqlResult')
+const { hash } = require('bcrypt')
 
 const existCheck = async( userEmail ) => {
     try{
@@ -14,12 +15,12 @@ const existCheck = async( userEmail ) => {
         middleErr.error(500, 'INVALID_DATA_INPUT')
     }
 }
-const verifyUser = async( userId, userEmail, userNickname, admin_status ) => {
+const verifyUser = async( userId, userEmail, admin_status ) => {
     try{
         const result = await appDataSource.query(`
-            SELECT id, email, nickname, admin_status FROM users
-            WHERE id = ? AND email = ? AND nickname = ? AND admin_status = ?
-        `, [userId, userEmail, userNickname, admin_status])
+            SELECT * FROM users
+            WHERE id = ? AND email = ? AND admin_status = ?
+        `, [userId, userEmail, admin_status])
         return result
     }catch(err){
         console.log(err)
@@ -84,7 +85,7 @@ const addPoint = async( userEmail ) => {
 }
 
 const changeUserInfo = async( data ) => {
-    const index = ['nickname', 'phone_number', 'birthday', 'gender', 'address']
+    const index = ['nickname', 'password',  'phone_number', 'birthday', 'gender', 'address']
     let query1 = ''
     for (i=0; i<index.length; i++){
         if(!data[index[i]].length==0){query1 = query1 + index[i] + ' = ' + `'${data[index[i]]}'` + ', ' }
@@ -93,6 +94,8 @@ const changeUserInfo = async( data ) => {
         middleErr.error(500, 'INVALID_DATA_INPUT')
     }
     query1 = 'UPDATE users SET ' + query1.slice(0,-2) + ' WHERE ' + `email = '${data.email}'`
+    console.log(query1)
+
     const change = await appDataSource.query(query1)
     if(change.affectedRows=0){
         middleErr.error(500, 'DATA_UPDATE_FAILED')
@@ -104,4 +107,19 @@ const changeUserInfo = async( data ) => {
     return viewResult[0]
 }
 
-module.exports = { existCheck, createUser, list, addPoint, verifyUser, changeUserInfo }
+const findPassword  = async( userEmail, hashedUserPassword ) => {
+    const change = await appDataSource.query(`
+        UPDATE users SET password = ? WHERE email = ?
+    `, [ hashedUserPassword, userEmail ])
+    sqlResult.sqlResult(change)
+}
+
+module.exports = {
+    existCheck,
+    createUser,
+    list,
+    addPoint,
+    verifyUser,
+    changeUserInfo,
+    findPassword
+}
