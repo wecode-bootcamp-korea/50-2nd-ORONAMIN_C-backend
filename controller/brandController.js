@@ -1,8 +1,7 @@
-const scentService = require("../services/scentService");
-const middleJwt = require("../middleware/jwt");
+const brandService = require("../services/brandService");
 
-//전체 향 조회
-const getAllScent = async (req, res) => {
+//전체 브랜드 조회
+const getAllBrands = async (req, res) => {
   try {
     //관리자 여부 조회
     const token = req.headers.authorization.substr(7);
@@ -11,18 +10,17 @@ const getAllScent = async (req, res) => {
     if (verifiedToken.status != 1) {
       return res.status(404).json({ message: "관리자 권한이 없습니다" });
     } //
-    const result = await scentService.getAllScent();
-    return res.status(200).json({ message: "All_SCENT_LOAED", result });
+    const result = await brandService.getAllBrands();
+    return res.status(200).json({ message: "ALL_BRANDS_LOADED", result });
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
   }
 };
 
-//특정 향 조회
-const getScent = async (req, res) => {
+//특정 브랜드 조회
+const getBrand = async (req, res) => {
   try {
-    const scentId = req.params.scentId;
     //관리자 여부 조회
     const token = req.headers.authorization.substr(7);
     const verifiedToken = await middleJwt.verifyToken(token);
@@ -30,16 +28,18 @@ const getScent = async (req, res) => {
     if (verifiedToken.status != 1) {
       return res.status(404).json({ message: "관리자 권한이 없습니다" });
     } //
-    const result = await scentService.getScent(scentId);
-    return res.status(200).json({ message: "SCENT_LOADED", result });
+    const brandId = req.params.brandId;
+
+    const result = await brandService.getBrand(brandId);
+    return res.status(200).json({ message: "BRAND_LOADED", result });
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
   }
 };
 
-//향 생성
-const createScent = async (req, res) => {
+//브랜드 생성
+const createBrand = async (req, res) => {
   try {
     //관리자 여부 조회
     const token = req.headers.authorization.substr(7);
@@ -48,22 +48,20 @@ const createScent = async (req, res) => {
     if (verifiedToken.status != 1) {
       return res.status(404).json({ message: "관리자 권한이 없습니다" });
     } //
-    const { scentName, scentDesc } = req.body;
-
-    if (!scentName || !scentDesc) {
+    const { brandName, brandLogo } = req.body;
+    if (!brandName || !brandLogo) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
-    await scentService.createScent(scentName, scentDesc);
-
-    return res.status(200).json({ message: "SCENT_CREATED" });
+    const result = await brandService.createBrand(brandName, brandLogo);
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
   }
 };
 
-//향 삭제
-const deleteScent = async (req, res) => {
+//브랜드 삭제
+
+const deleteBrand = async (req, res) => {
   try {
     //관리자 여부 조회
     const token = req.headers.authorization.substr(7);
@@ -72,18 +70,18 @@ const deleteScent = async (req, res) => {
     if (verifiedToken.status != 1) {
       return res.status(404).json({ message: "관리자 권한이 없습니다" });
     } //
-    const scentId = req.params.scentId;
+    const brandId = req.params.brandId;
 
-    await scentService.deleteScent(scentId);
-
-    return res.status(200).json({ message: "SCENT_DELETED" });
+    await brandService.deleteBrand(brandId);
+    return res.status(200).json({ message: "BRAND_DELETED" });
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
   }
 };
-//향 수정
-const updateScent = async (req, res) => {
+
+//브랜드 수정
+const updateBrand = async (req, res) => {
   try {
     //관리자 여부 조회
     const token = req.headers.authorization.substr(7);
@@ -92,27 +90,23 @@ const updateScent = async (req, res) => {
     if (verifiedToken.status != 1) {
       return res.status(404).json({ message: "관리자 권한이 없습니다" });
     } //
-    const scentId = req.params.scentId;
-    const { scentName, scentDesc } = req.body;
-
-    if (!scentName || !scentDesc) {
+    const brandId = req.params.brandId;
+    const { brandName, brandLogo } = req.body;
+    if (!brandName || !brandLogo) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
-    const result = await scentService.updateScent(
-      scentId,
-      scentName,
-      scentDesc
-    );
-    return res.status(200).json({ message: "SCENT_UPDATED", result });
+    await brandService.updateBrand(brandId, brandName, brandLogo);
+    return res.status(200).json({ message: "BRAND_UPDATED" });
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
   }
 };
+
 module.exports = {
-  getAllScent,
-  getScent,
-  createScent,
-  deleteScent,
-  updateScent,
+  getAllBrands,
+  getBrand,
+  createBrand,
+  deleteBrand,
+  updateBrand,
 };

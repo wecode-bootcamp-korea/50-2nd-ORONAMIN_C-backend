@@ -1,13 +1,14 @@
-// const express = require("express");
-// const scentController = require("../controller/scentController");
+const express = require("express");
+const scentController = require("../controller/scentController");
 
-// const router = express.Router();
+const router = express.Router();
 
-// // router.post("/scent", imageController.createImage); //이미지 등록
-// // router.get("/image/:productId", imageController.getImage); //특정 이미지 조회
-// // router.delete("/image/:imageId", imageController.deleteImage); // 이미지 삭제
-// // router.put("/image/:imageId", imageController.updateImage); //이미지 수정
+router.get("/scent", scentController.getAllScent); // 전체 향 조회
+router.get("/scent/:scentId", scentController.getScent); //특정 향 조회
+router.post("/scent", scentController.createScent); //향 생성
+router.delete("/scent/:scentId", scentController.deleteScent); //향 삭제
+router.put("/scent/:scentId", scentController.updateScent); //향 수정
 
-// module.exports = {
-//   router,
-// };
+module.exports = {
+  router,
+};
