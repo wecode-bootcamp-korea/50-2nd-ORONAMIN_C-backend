@@ -5,7 +5,7 @@ const getProducts = async (brandName,scentName) =>{
     SELECT products.id,products.name as product_name,products.price,products.description,products.brand_id,products.scent_id,products.stock,
     scents.name,scents.scent_desc,
     brands.name as brand_name,
-    images.image_source,images.product_id 
+    images.image_source 
     FROM products 
     LEFT JOIN images ON products.id = images.product_id
     LEFT JOIN scents ON products.scent_id = scents.id
