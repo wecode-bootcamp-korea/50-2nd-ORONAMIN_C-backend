@@ -50,12 +50,14 @@ const list = async(req,res) => {
 
 const oneList = async(req,res) => {
     try{
-        console.log(req.params)
-        const userEmail = req.params.userEmail
-        if(!req.params.userEmail){
-            return res.status(400).json({message : 'KEY_ERROR'})
-        }
-        const result = await userService.oneList( userEmail )
+        const token = req.headers.authorization.substr(7)
+        const verifiedToken = await middleJwt.verifyToken(token)
+        const result = await userService.oneList(verifiedToken)
+        // const userEmail = req.params.userEmail
+        // if(!req.params.userEmail){
+        //     return res.status(400).json({message : 'KEY_ERROR'})
+        // }
+        // const result = await userService.oneList( userEmail )
         res.status(200).json( result )
     }catch(err){
         console.log(err)

@@ -49,11 +49,16 @@ const list = async() => {
     return userList
 }
 
-const oneList = async( userEmali ) =>{
-    const result = await userDao.existCheck( userEmali )
-    return {email : result[0].email,
-    nickname : result[0].nickname,
-    result : result[0].point}
+const oneList = async( token ) =>{
+    const verify = await userDao.verifyUser( token.id, token.email, token.status )
+    if(verify.length==0){
+        middleErr.error(400, "EMAIL_NOT_FOUND")
+    }
+    return {email : verify[0].email,
+    nickname : verify[0].nickname,
+    phone_number : verify[0].phone_number,
+    address : verify[0].address,
+    point : verify[0].point}
 }
 
 const addPoint = async(token) => {
@@ -110,7 +115,6 @@ const findPassword = async( userEmail ) => {
 //     const verifyNumber = Math.random().toString(35).slice(2)
 //     console.log(verifyNumber)
 //     middleMailer.sendEmail( userEmail, verifyNumber )
-
 // }
 
 module.exports = {
