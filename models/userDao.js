@@ -1,7 +1,6 @@
 const { appDataSource } = require('./datasource')
 const middleErr = require('../middleware/error')
 const sqlResult = require('../util/sqlResult')
-const { hash } = require('bcrypt')
 
 const existCheck = async( userEmail ) => {
     try{
@@ -35,7 +34,6 @@ const createUser = async ( userEmail, hashedUserPassword, userNickname, userPhon
             values(?,?,?,?,?,?,?)`,
             [userEmail, hashedUserPassword, userNickname, userPhoneNumber, userBirthDay, userGender, 1000000]
         )
-        // 쿼리가 정상 작동했음에도 불구하고 데이터가 수정되지 않은 경우 에러 캐치
         if(create.insertId=0){
             middleErr.error(500, 'DATA_INSERT_FAILED')
         }
@@ -48,10 +46,10 @@ const createUser = async ( userEmail, hashedUserPassword, userNickname, userPhon
     }
 }
 
-const list = async() => {
+const getUserList = async() => {
     try{
         return await appDataSource.query(`
-            SELECT * FROM users;
+            SELECT id, nickname, email, phone_number, birthday, address, gender, point FROM users;
         `)
     }catch(err){
         console.log(err)
@@ -69,22 +67,22 @@ const addPoint = async( userEmail ) => {
         const change = await appDataSource.query(`
             UPDATE users SET point = ? WHERE email = ?
         `, [replacePoint, userEmail])
-        // 쿼리가 정상 작동했음에도 불구하고 데이터가 수정되지 않은 경우 에러 캐치
         if(change.affectedRows=0){
             middleErr.error(500, 'DATA_UPDATE_FAILED')
         }
         sqlResult.sqlResult(change)
-        const result = await appDataSource.query(`
-            select email, point from users where email = ?
-        `, [userEmail])
-        return {email : result[0].email, '당첨 포인트' : addRandomPoint, '현재 포인트' : result[0].point}
+        
+        const [result] = await appDataSource.query(`
+        select email, point from users where email = ?
+    `, [userEmail])
+    return {email : result.email, '당첨 포인트' : addRandomPoint, '현재 포인트' : result.point}
     }catch(err){
         console.log(err)
         middleErr.error(500, 'INVALID_DATA_INPUT')
     }
 }
 
-const changeUserInfo = async( data ) => {
+const updateUserInfo = async( data ) => {
     const index = ['nickname', 'password',  'phone_number', 'birthday', 'gender', 'address']
     let query1 = ''
     for (i=0; i<index.length; i++){
@@ -94,17 +92,16 @@ const changeUserInfo = async( data ) => {
         middleErr.error(500, 'INVALID_DATA_INPUT')
     }
     query1 = 'UPDATE users SET ' + query1.slice(0,-2) + ' WHERE ' + `email = '${data.email}'`
-    console.log(query1)
 
     const change = await appDataSource.query(query1)
     if(change.affectedRows=0){
         middleErr.error(500, 'DATA_UPDATE_FAILED')
     }
     sqlResult.sqlResult(change)
-    const viewResult = await appDataSource.query(`
+    const [ viewResult ] = await appDataSource.query(`
         select email, nickname, phone_number, birthday, gender, address from users where email = ?
     `, [data.email])
-    return viewResult[0]
+    return viewResult
 }
 
 const findPassword  = async( userEmail, hashedUserPassword ) => {
@@ -117,9 +114,9 @@ const findPassword  = async( userEmail, hashedUserPassword ) => {
 module.exports = {
     existCheck,
     createUser,
-    list,
+    getUserList,
     addPoint,
     verifyUser,
-    changeUserInfo,
+    updateUserInfo,
     findPassword
 }
