@@ -10,7 +10,6 @@ const busket = async (req,res) => {
         const token = frontToken.substr(7)
         const verifiedToken = await verifyToken(token)
         const verifiedEmail = verifiedToken.email
-        
         const userData = await orderServices.busket(verifiedEmail);
         res.status(201).json(userData)
 };
@@ -33,7 +32,6 @@ const cutProduct = async (req, res) =>{
         const token = frontToken.substr(7)
         const verifiedToken = await verifyToken(token)
         const verifiedEmail = verifiedToken.email
-        console.log(verifiedEmail)
         await orderServices.cutProduct(verifiedEmail,productId);
         return res.status(201).json({message : "CUT COMPLETE!"})
     }catch(err){
@@ -74,21 +72,6 @@ const addBusket = async (req, res) =>{
         return res.status(err.statusCode|| 500).json({message : err.meesage})
     }
 };
-
-// const paymentBusket = async(req,res)=>{
-//     try{
-//         const frontToken = req.headers.authorization;
-//         const token = frontToken.substr(7);
-//         const verifiedToken = await verifyToken(token)
-//         const verifiedId = verifiedToken.id
-//         const userData= await orderServices.paymentBusket(verifiedId)
-//         return res.status(201).json({userData})
-
-//     }catch(err){
-//         console.log(err)
-//         return res.status(err.statusCode||500).json({message : err.meesage})
-//     }
-// }
 
 const payBusket = async(req,res)=>{
     try{
