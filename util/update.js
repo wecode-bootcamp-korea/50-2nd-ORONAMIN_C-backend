@@ -1,4 +1,4 @@
-const updateQuery = (productName, price, description, brandId, scentId)=>{
+const updateQuery = (productName, price, description, brandId, scentId,imageId)=>{
     let updateFields = '';
     if (productName !== undefined) {
       updateFields += `name = '${productName}', `;
@@ -18,6 +18,11 @@ const updateQuery = (productName, price, description, brandId, scentId)=>{
   
     if (scentId !== undefined) {
       updateFields += `scent_id = '${scentId}', `;
+    }
+
+    if(imageId !== undefined){
+      updateFields += `image_id = '${imageId}', `;
+
     }
     updateFields = updateFields.slice(0, -2);
 

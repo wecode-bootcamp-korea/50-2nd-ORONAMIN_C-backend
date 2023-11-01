@@ -29,9 +29,9 @@ const getProduct = async (id) =>{
     where products.id = ?
     `,[id])
 }
-const createProduct = async(productName,price,description,brandId,scentId) =>{
+const createProduct = async(productName,price,description,brandId,scentId,imageId) =>{
     return await appDataSource.query(`
-    insert into products (name,price,description,brand_id,scent_id) values('${productName}',${price},'${description}',${brandId},${scentId})
+    insert into products (name,price,description,brand_id,scent_id,image_id) values('${productName}',${price},'${description}',${brandId},${scentId},${imageId})
     `)
 }
 
@@ -40,8 +40,8 @@ const deleteProduct  = async(id) => {
     delete from products where id = '${id}'
     `)
 }
-const updateProduct = async(productId,productName,price,description,brandId,scentId)=>{
-    const updateFields = await updateQuery(productName, price, description, brandId, scentId)
+const updateProduct = async(productId,productName,price,description,brandId,scentId,imageId)=>{
+    const updateFields = await updateQuery(productName, price, description, brandId, scentId,imageId)
     return await appDataSource.query(`
     update products set
     ${updateFields}

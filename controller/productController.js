@@ -5,7 +5,7 @@ const productAll = async(req,res) =>{
     try{
         const {brandName,scentName} = req.query
         const products = await productService.getProducts(brandName,scentName)
-        res.status(200).json({products})
+        res.status(200).json(products)
     }catch(err){
         res.status(500 || statusCode).json({message: err.message})
     }
@@ -21,16 +21,16 @@ const getProduct = async(req,res) => {
     }
 }
 const createProduct = async(req,res) =>{
-    const {productName,price,description,brandId,scentId} = req.body
+    const {productName,price,description,brandId,scentId,imageId} = req.body
     const token = req.headers.authorization.substr(7)
     const decodedToken = await middleJwt.verifyToken(token)
     try{
-        if(!productName||!price||!description||!brandId||!scentId){
+        if(!productName||!price||!description||!brandId||!scentId||!imageId){
             throw new Error("INPUT_KEY_ERROR")
         }
         if(token){
             if(decodedToken.status === 1){
-                await productService.createProduct(productName,price,description,brandId,scentId)
+                await productService.createProduct(productName,price,description,brandId,scentId,imageId)
                 res.status(200).json({message: "successfully created"})
             }else{
                 throw new Error("Permission Denied")
@@ -42,13 +42,13 @@ const createProduct = async(req,res) =>{
 }
 const updateProduct = async (req,res) =>{
     const productId = req.params.productId
-    const {productName,price,description,brandId,scentId} = req.body
+    const {productName,price,description,brandId,scentId,imageId} = req.body
     const token = req.headers.authorization.substr(7)
     const decodedToken = await middleJwt.verifyToken(token)
     try{
         if(token){
             if(decodedToken.status === 1){
-                await productService.updateProduct(productId,productName,price,description,brandId,scentId)
+                await productService.updateProduct(productId,productName,price,description,brandId,scentId,imageId)
                 res.status(200).json({message: "successfully updated"})
             }else{
                 throw new Error("Permission Denied")
