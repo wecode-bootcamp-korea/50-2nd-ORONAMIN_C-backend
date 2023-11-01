@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer')
 const dotenv = require("dotenv")
 
+// 받는 사람의 메일과, 생성된 코드를 입력하면 메일을 발신하는 함수
 const sendEmail = async( userEmail, verifyNumber ) => {
     const transporter = nodemailer.createTransport({
         service : 'gmail',
