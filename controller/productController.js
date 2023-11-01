@@ -5,12 +5,31 @@ const productAll = async(req,res) =>{
     try{
         const {brandName,scentName} = req.query
         const products = await productService.getProducts(brandName,scentName)
-        console.log(brandName,scentName)
-        res.status(200).json({products})
+        console.log(products[0].scent_desc)
+        res.status(200).json(products)
     }catch(err){
         res.status(500).json({message: "error"})
     }
 }
+// const responseObject = { products};
+// const resultObject = {};
+// products.forEach(product => {
+//     if(!scentDescShown){
+//         resultObject.scentDesc = product.scent_desc;
+//         scentDescShown = true;
+//     }
+//     resultObject[`product_${product.id}`] ={
+//         id: product.id,
+//         product_name: product.name,
+//         price: product.price,
+//         description: product.description,
+//         brand_id: product.brand_id,
+//         scent_id: product.scent_id,
+//         stock : product.stock,
+//         brand_name: product.brand_name,
+//         image_source: product.image_sour
+//     }
+// });
 
 const getProduct = async(req,res) => {
     const id = req.params.id

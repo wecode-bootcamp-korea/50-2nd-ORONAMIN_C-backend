@@ -8,12 +8,13 @@ const getProducts = async (brandName,scentName) =>{
     brands.name as brand_name,
     images.image_source 
     FROM products 
-    LEFT JOIN images ON products.id = images.product_id
+    LEFT JOIN images ON products.image_id = images.id
     LEFT JOIN scents ON products.scent_id = scents.id
     LEFT JOIN brands ON products.brand_id = brands.id 
     WHERE products.brand_id = '${brandName}' or products.scent_id = '${scentName}'`)
     const scentDescMap = await scentDesc(result)
       return scentDescMap
+    return result
 }
 
 
