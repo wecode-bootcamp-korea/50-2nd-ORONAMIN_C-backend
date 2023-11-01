@@ -24,7 +24,7 @@ const getProduct = async (id) =>{
     images.image_source,
     scents.name as scents_name
     from products 
-    LEFT JOIN images on products.id = images.product_id 
+    LEFT JOIN images ON products.image_id = images.id
     LEFT JOIN scents on products.scent_id = scents.id 
     where products.id = ?
     `,[id])

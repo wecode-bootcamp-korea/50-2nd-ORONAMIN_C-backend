@@ -26,7 +26,7 @@ const updateProduct = async(productId,productName,price,description,brandId,scen
     const getProduct = await productDao.getProduct(id)
     if(getProduct.length === 0){
         const err = new Error()
-        err.statusCode = 400
+        err.statusCode = 404
         err.message = "없는 상품입니다."
         throw err;
     }

@@ -5,10 +5,9 @@ const productAll = async(req,res) =>{
     try{
         const {brandName,scentName} = req.query
         const products = await productService.getProducts(brandName,scentName)
-        console.log(products[0].scent_desc)
-        res.status(200).json(products)
+        res.status(200).json({products})
     }catch(err){
-        res.status(500).json({message: "error"})
+        res.status(500 || statusCode).json({message: err.message})
     }
 }
 
@@ -25,17 +24,16 @@ const createProduct = async(req,res) =>{
     const {productName,price,description,brandId,scentId} = req.body
     const token = req.headers.authorization.substr(7)
     const decodedToken = await middleJwt.verifyToken(token)
-    console.log(decodedToken)
     try{
         if(!productName||!price||!description||!brandId||!scentId){
-            return res.status(400).json({message: "INPUT_KEY_ERROR"})
+            throw new Error("INPUT_KEY_ERROR")
         }
         if(token){
             if(decodedToken.status === 1){
                 await productService.createProduct(productName,price,description,brandId,scentId)
-                res.status(200).json({message: "등록완료~!"})
+                res.status(200).json({message: "successfully created"})
             }else{
-                res.status(404).json({message: "권한이 없습니다."})
+                throw new Error("Permission Denied")
             }
         }
     }catch(err){
@@ -51,13 +49,13 @@ const updateProduct = async (req,res) =>{
         if(token){
             if(decodedToken.status === 1){
                 await productService.updateProduct(productId,productName,price,description,brandId,scentId)
-                res.status(200).json({message: "수정완료~!"})
+                res.status(200).json({message: "successfully updated"})
             }else{
-                res.status(404).json({message:"수정불가"})
+                throw new Error("Permission Denied")
             }
         }
     }catch(err){
-        res.status(404).json({message: err.message})
+        res.status(500 || statusCode).json({message: err.message})
     }
 }
 const deleteProduct = async(req,res)=>{
