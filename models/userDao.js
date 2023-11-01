@@ -2,7 +2,7 @@ const { appDataSource } = require('./datasource')
 const middleErr = require('../middleware/error')
 const sqlResult = require('../util/sqlResult')
 const { hash } = require('bcrypt')
-
+//
 const existCheck = async( userEmail ) => {
     try{
         const result = appDataSource.query(`

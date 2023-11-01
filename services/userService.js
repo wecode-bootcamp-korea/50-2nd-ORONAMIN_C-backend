@@ -3,7 +3,7 @@ const middleHash = require('../middleware/hash')
 const middleErr = require('../middleware/error')
 const middleJwt = require('../middleware/jwt')
 const middleMailer = require('../middleware/mailer')
-
+//
 const signUp = async( userEmail, userPassword, userNickname, userPhoneNumber, userBirthDay, userGender ) => {
     if(!userEmail.includes('@') || !userEmail.includes('.')){
         middleErr.error(400, "EMAIL_FORMAT_INCORRECT")

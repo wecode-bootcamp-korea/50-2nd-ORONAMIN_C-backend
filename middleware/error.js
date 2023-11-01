@@ -4,5 +4,5 @@ const error = (statusCode, message) => {
     err.statusCode = statusCode;
     throw err
 }
-
+//
 module.exports = { error }

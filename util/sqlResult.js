@@ -7,5 +7,5 @@ const sqlResult = (result) =>{
     if (result.serverStatus=2){console.log("서버 상태 : 정상")}
     else {console.log("SQL 서버가 정상작동중인지 확인이 필요합니다.")}
 }
-
+//
 module.exports = { sqlResult }

@@ -1,7 +1,7 @@
 const userService = require('../services/userService');
 const middleNick = require('../util/nickMaker');
 const middleJwt = require('../middleware/jwt');
-
+//
 const signUp = async(req,res) => {
     try{
         if(!req.body.email || !req.body.password || !req.body.phone_number || !req.body.birthday){
