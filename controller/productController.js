@@ -5,7 +5,7 @@ const productAll = async(req,res) =>{
     try{
         const {brandName,scentName} = req.query
         const products = await productService.getProducts(brandName,scentName)
-        res.status(200).json(products)
+        res.status(200).json({products})
     }catch(err){
         res.status(500 || statusCode).json({message: err.message})
     }
