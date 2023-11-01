@@ -1,14 +1,14 @@
 const { verify } = require('jsonwebtoken');
 const orderServices = require('../services/orderServices');
-const jwt = require('jsonwebtoken')
+
 const { verifyToken } = require('../middleware/jwt')
+
 
 
 const busket = async (req,res) => {
         const frontToken = req.headers.authorization;
         const token = frontToken.substr(7)
         const verifiedToken = await verifyToken(token)
-        console.log(verifiedToken)
         const verifiedEmail = verifiedToken.email
         
         const userData = await orderServices.busket(verifiedEmail);
@@ -20,9 +20,7 @@ const addProduct = async (req, res) => {
         const frontToken = req.headers.authorization;
         const token = frontToken.substr(7)
         const verifiedToken = await verifyToken(token)
-        console.log(verifiedToken)
         const verifiedEmail = verifiedToken.email
-        console.log(verifiedEmail)
 
     await orderServices.addProduct(verifiedEmail, productId);
     return res.status(201).json({message : "ADD COMPLETE!" });
@@ -69,7 +67,6 @@ const addBusket = async (req, res) =>{
         const token = frontToken.substr(7)
         const verifiedToken = await verifyToken(token)
         const verifiedUserId = verifiedToken.id
-        console.log(verifiedUserId)
         await orderServices.addBusket(verifiedUserId, product_id);
         return res.status(201).json({message : "ADDBUSKET SUCCESS!"})
     }catch(err){
@@ -78,19 +75,41 @@ const addBusket = async (req, res) =>{
     }
 };
 
-const paymentBusket = async(req,res)=>{
+// const paymentBusket = async(req,res)=>{
+//     try{
+//         const frontToken = req.headers.authorization;
+//         const token = frontToken.substr(7);
+//         const verifiedToken = await verifyToken(token)
+//         const verifiedId = verifiedToken.id
+//         const userData= await orderServices.paymentBusket(verifiedId)
+//         return res.status(201).json({userData})
+
+//     }catch(err){
+//         console.log(err)
+//         return res.status(err.statusCode||500).json({message : err.meesage})
+//     }
+// }
+
+const payBusket = async(req,res)=>{
     try{
         const frontToken = req.headers.authorization;
         const token = frontToken.substr(7);
         const verifiedToken = await verifyToken(token)
         const verifiedId = verifiedToken.id
-        const userData= await orderServices.paymentBusket(verifiedId)
-        return res.status(201).json({userData})
-
+        const { order_number,address,products,total_price} = req.body
+        if(!order_number || !address || !products || !total_price){
+            console.log(err)
+            middleErr.error(500, 'KEY_ERROR')
+        }
+        
+        await orderServices.payBusket(verifiedId, order_number,address,products, total_price)
+        return res.status(201).json({message: "PAYMENT COMPLETE!"})
     }catch(err){
         console.log(err)
-        return res.status(err.statusCode||500).json({message : err.meesage})
+        return res.status(err.statusCode || 500).json({message : err.meesage})
     }
-}
+};
 
-module.exports = { busket , addProduct,cutProduct, addBusket, paymentBusket, deleteProduct }
+
+
+module.exports = { busket , addProduct,cutProduct, addBusket, deleteProduct, payBusket }
