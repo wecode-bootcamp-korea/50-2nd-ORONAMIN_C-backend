@@ -14,7 +14,6 @@ const getProducts = async (brandName,scentName) =>{
     WHERE products.brand_id = '${brandName}' or products.scent_id = '${scentName}'`)
     const scentDescMap = await scentDesc(result)
       return scentDescMap
-    return result
 }
 
 
