@@ -1,19 +1,21 @@
 const userService = require('../services/userService');
 const middleNick = require('../util/nickMaker');
 const middleJwt = require('../middleware/jwt');
-//
+const middleErr = require('../middleware/error');
+
 const signUp = async(req,res) => {
     try{
         if(!req.body.email || !req.body.password || !req.body.phone_number || !req.body.birthday){
-            return res.status(400).json({message : 'KEY_ERROR'})
+            middleErr.error(400, 'KEY_ERROR')
         }
-        const userEmail = req.body.email
-        const userPassword = req.body.password
-        const userNickname = req.body.nickname          || middleNick.nicknameMaker()
-        const userPhoneNumber = req.body.phone_number
-        const userBirthDay = req.body.birthday
-        const userGender = req.body.gender              || ""
-
+        const {
+            email           : userEmail,
+            password        : userPassword,
+            nickname        : userNickname      = middleNick.nicknameMaker(),
+            phone_number    : userPhoneNumber,
+            birthday        : userBirthDay,
+            gender          : userGender        = ""
+        } = req.body
         await userService.signUp( userEmail, userPassword, userNickname, userPhoneNumber, userBirthDay, userGender )
 
         res.status(200).json({message:'SIGNUP_SUCCESS'})
@@ -26,10 +28,12 @@ const signUp = async(req,res) => {
 const signIn = async(req,res) => {
     try{
         if(!req.body.email || !req.body.password){
-            return res.status(400).json({message : 'KEY_ERROR'})
+            middleErr.error(400, 'KEY_ERROR')
         }
-        const userEmail = req.body.email
-        const userPassword = req.body.password
+        const {
+            email       : userEmail,
+            password    : userPassword
+        } = req.body
         const token =  await userService.signIn( userEmail, userPassword )
         res.status(200).json({message:'SIGNIN_SUCCESS', token:token})
     }catch(err){
@@ -53,11 +57,7 @@ const oneList = async(req,res) => {
         const token = req.headers.authorization.substr(7)
         const verifiedToken = await middleJwt.verifyToken(token)
         const result = await userService.oneList(verifiedToken)
-        // const userEmail = req.params.userEmail
-        // if(!req.params.userEmail){
-        //     return res.status(400).json({message : 'KEY_ERROR'})
-        // }
-        // const result = await userService.oneList( userEmail )
+        
         res.status(200).json( result )
     }catch(err){
         console.log(err)
@@ -82,19 +82,21 @@ const changeUserInfo = async(req,res) => {
     try{
         const token = req.headers.authorization.substr(7)
         const verifiedToken = await middleJwt.verifyToken(token)
-        const changeNickname = req.body.nickname            || ""
-        const changePassword = req.body.password            || ""
-        const changePhone_number = req.body.phone_number    || ""
-        const changeBirthday = req.body.birthday            || ""
-        const changeGender = req.body.gender                || ""
-        const changeAdress = req.body.address               || ""
-        const count = changeNickname.length
+        const {
+            nickname        : changeNickname      = "",
+            password        : changePassword      = "",
+            phone_number    : changePhone_number  = "",
+            birthday        : changeBirthday      = "",
+            gender          : changeGender        = "",
+            address         : changeAdress        = ""
+        } = req.body
+        const dataCount = changeNickname.length
                         +changePassword.length
                         +changePhone_number.length
                         +changeBirthday.length
                         +changeGender.length+changeAdress.length
-        if(count==0){
-            return res.status(400).json({message : 'KEY_ERROR'})
+        if(dataCount==0){
+            middleErr.error(400, 'KEY_ERROR')
         }
 
         const result = await userService.changeUserInfo(
@@ -111,11 +113,11 @@ const changeUserInfo = async(req,res) => {
 const findPassword = async(req,res) => {
     try{
         if(!req.body.email){
-            return res.status(400).json({message : 'KEY_ERROR'})
+            middleErr.error(400, 'KEY_ERROR')
         }
         const userEmail = req.body.email
 
-        const result =  await userService.findPassword( userEmail )
+        const result =  await userService.setNewPassword( userEmail )
 
         res.status(200).json({ message : 'PASSWORD_REISSUANCE', result})
     }catch(err){

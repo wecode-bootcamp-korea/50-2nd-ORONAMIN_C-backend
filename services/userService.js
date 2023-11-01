@@ -2,7 +2,7 @@ const userDao = require('../models/userDao')
 const middleHash = require('../middleware/hash')
 const middleErr = require('../middleware/error')
 const middleJwt = require('../middleware/jwt')
-const middleMailer = require('../middleware/mailer')
+// const middleMailer = require('../middleware/mailer')
 //
 const signUp = async( userEmail, userPassword, userNickname, userPhoneNumber, userBirthDay, userGender ) => {
     if(!userEmail.includes('@') || !userEmail.includes('.')){
@@ -11,8 +11,8 @@ const signUp = async( userEmail, userPassword, userNickname, userPhoneNumber, us
     if(userPassword.length<10){
         middleErr.error(400, "PASSWORD_FORMAT_INCORRECT")
     }
-    console.log()
-    if(userPhoneNumber.length<13){
+    const phonenumberFormatLength = 13
+    if(userPhoneNumber.length < phonenumberFormatLength){
         middleErr.error(400, "PHONE_NUMBER_FORMAT_INCORRECT")
     }
     const checkEmail = await userDao.existCheck( userEmail )
@@ -39,38 +39,38 @@ const signIn = async( userEmail, userPassword ) => {
     if(!test){
         middleErr.error(400, "WRONG_PASSWORD")
     }
-    const tokenData = await userDao.existCheck( userEmail )
-    const token = await middleJwt.makeToken(tokenData[0].id, tokenData[0].email , tokenData[0].admin_status)
+    const [ tokenData ] = await userDao.existCheck( userEmail )
+    const token = await middleJwt.makeToken(tokenData.id, tokenData.email , tokenData.admin_status)
     return token
 }
 
 const list = async() => {
-    const userList = await userDao.list()
+    const userList = await userDao.getUserList()
     return userList
 }
 
 const oneList = async( token ) =>{
-    const verify = await userDao.verifyUser( token.id, token.email, token.status )
+    const [ verify ] = await userDao.verifyUser( token.id, token.email, token.status )
     if(verify.length==0){
         middleErr.error(400, "EMAIL_NOT_FOUND")
     }
-    return {email : verify[0].email,
-    nickname : verify[0].nickname,
-    phone_number : verify[0].phone_number,
-    address : verify[0].address,
-    point : verify[0].point}
+    return {email : verify.email,
+    nickname : verify.nickname,
+    phone_number : verify.phone_number,
+    address : verify.address,
+    point : verify.point}
 }
 
 const addPoint = async(token) => {
-    const verify = await userDao.verifyUser( token.id, token.email, token.status )
+    const [ verify ] = await userDao.verifyUser( token.id, token.email, token.status )
     if(verify.length==0){
         middleErr.error(400, "EMAIL_NOT_FOUND")
     }
-    return await userDao.addPoint( verify[0].email )
+    return await userDao.addPoint( verify.email )
 }
 
 const changeUserInfo = async( token, nickname, password, phone_number, birthday, gender, address ) => {
-    const verify = await userDao.verifyUser( token.id, token.email, token.status )
+    const [ verify ] = await userDao.verifyUser( token.id, token.email, token.status )
     if(verify.length==0){
         middleErr.error(400, "EMAIL_NOT_FOUND")
     }
@@ -82,7 +82,7 @@ const changeUserInfo = async( token, nickname, password, phone_number, birthday,
         newPassword = await middleHash.hash( password )
     }
     const data = {
-        email : verify[0].email,
+        email : verify.email,
         nickname : nickname,
         password : newPassword,
         phone_number : phone_number,
@@ -90,10 +90,10 @@ const changeUserInfo = async( token, nickname, password, phone_number, birthday,
         gender : gender,
         address : address 
     }
-    return await userDao.changeUserInfo( data ) 
+    return await userDao.updateUserInfo( data ) 
 }
 
-const findPassword = async( userEmail ) => {
+const setNewPassword = async( userEmail ) => {
     if(!userEmail.includes('@') || !userEmail.includes('.')){
         middleErr.error(400, "EMAIL_FORMAT_INCORRECT")
     }
@@ -124,6 +124,6 @@ module.exports = {
     oneList,
     addPoint,
     changeUserInfo,
-    findPassword,
+    setNewPassword,
     // auth
 }
