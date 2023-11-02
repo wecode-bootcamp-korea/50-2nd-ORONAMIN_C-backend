@@ -38,7 +38,6 @@ const getImageByDesc = async (req, res) => {
   try {
     await error.unathorizationError(req); //관리자 여부 조회
     const imageDesc = req.query.desc;
-    console.log("imageDesc:", imageDesc);
     const result = await imageService.getImageByDesc(imageDesc);
     return res.status(200).json({ message: "IMAGE_LOADED_BY_DESC", result });
   } catch (err) {
