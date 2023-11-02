@@ -1,8 +1,8 @@
 const orderDao = require('../models/orderDao');
 const middleErr = require('../middleware/error')
 
-const orderBasket = async (userId)=>{
-    const busketData = await orderDao.orderBasket(userId);
+const getBasketByUserId = async (userId)=>{
+    const busketData = await orderDao.getBasketByUserId(userId);
     return busketData
 }
 
@@ -35,5 +35,10 @@ const payBasket = async(userId, order_number,address,products, total_price)=>{
     await orderDao.payBasket(userId, order_number,address,products, total_price);
     await orderDao.pointReduction(userId, total_price)
 };
-module.exports = {orderBasket, increaseBasketQuantity
-    ,decreaseBasketQuantity, createBasket, deleteProduct, payBasket}
+module.exports = {
+    getBasketByUserId,
+    increaseBasketQuantity,
+    decreaseBasketQuantity, 
+    createBasket, 
+    deleteProduct,
+    payBasket }

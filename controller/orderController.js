@@ -2,13 +2,13 @@ const orderServices = require('../services/orderServices');
 const middleErr = require('../middleware/error')
 const { verifyToken } = require('../middleware/jwt')
 
-const orderBasket = async (req,res) => {
+const getBasketByUserId = async (req,res) => {
         try{
             const frontToken = req.headers.authorization;
             const token = frontToken.substr(7)
             const verifiedToken = await verifyToken(token)
             const userId = verifiedToken.id
-            const userData = await orderServices.orderBasket(userId);
+            const userData = await orderServices.getBasketByUserId(userId);
             res.status(201).json(userData)
         }catch(err){
             console.log(err)
@@ -97,5 +97,10 @@ const payBasket = async(req,res)=>{
         return res.status(err.statusCode || 500).json({message : err.meesage})
     }
 };
-module.exports = { orderBasket ,increaseBasketQuantity,decreaseBasketQuantity, 
-    createBasket, deleteProduct, payBasket }
+module.exports = {
+        getBasketByUserId,
+        increaseBasketQuantity,
+        decreaseBasketQuantity, 
+        createBasket, 
+        deleteProduct,
+        payBasket }

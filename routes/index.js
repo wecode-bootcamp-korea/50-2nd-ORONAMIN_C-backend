@@ -1,6 +1,6 @@
 //routes/index.js
 const express = require("express");
 const router = express.Router();
-const orderRouters = require('./orderRouters');
-router.use('/orders', orderRouters.router)
+const orderRouter = require('./orderRouter');
+router.use('/orders', orderRouter)
 module.exports = router;
