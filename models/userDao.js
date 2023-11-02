@@ -104,7 +104,7 @@ const updateUserInfo = async( data ) => {
     return viewResult
 }
 
-const findPassword  = async( userEmail, hashedUserPassword ) => {
+const setNewPassword  = async( userEmail, hashedUserPassword ) => {
     const change = await appDataSource.query(`
         UPDATE users SET password = ? WHERE email = ?
     `, [ hashedUserPassword, userEmail ])
@@ -118,5 +118,5 @@ module.exports = {
     addPoint,
     verifyUser,
     updateUserInfo,
-    findPassword
+    setNewPassword
 }

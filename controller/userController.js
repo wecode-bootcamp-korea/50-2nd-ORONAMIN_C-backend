@@ -42,21 +42,11 @@ const signIn = async(req,res) => {
     }
 }
 
-const list = async(req,res) => {
-    try{
-        const result = await userService.list()
-        res.status(200).json( result )
-    }catch(err){
-        console.log(err)
-        res.status(err.status || 500).json({message : err.message})
-    }
-}
-
-const oneList = async(req,res) => {
+const getUserInfo = async(req,res) => {
     try{
         const token = req.headers.authorization.substr(7)
         const verifiedToken = await middleJwt.verifyToken(token)
-        const result = await userService.oneList(verifiedToken)
+        const result = await userService.getUserInfo(verifiedToken)
         
         res.status(200).json( result )
     }catch(err){
@@ -110,7 +100,7 @@ const changeUserInfo = async(req,res) => {
     }
 }
 
-const findPassword = async(req,res) => {
+const setNewPassword = async(req,res) => {
     try{
         if(!req.body.email){
             middleErr.error(400, 'KEY_ERROR')
@@ -125,6 +115,16 @@ const findPassword = async(req,res) => {
         res.status(err.status || 500).json({message : err.message})
     }
 }
+
+// const list = async(req,res) => {
+//     try{
+//         const result = await userService.list()
+//         res.status(200).json( result )
+//     }catch(err){
+//         console.log(err)
+//         res.status(err.status || 500).json({message : err.message})
+//     }
+// }
 
 // const auth = async(req,res) => {
 //     try{
@@ -145,10 +145,10 @@ const findPassword = async(req,res) => {
 module.exports = {
     signUp,
     signIn,
-    list,
-    oneList,
+    getUserInfo,
     addPoint,
     changeUserInfo,
-    findPassword,
+    setNewPassword,
+    // list,
     // auth
  }
