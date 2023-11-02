@@ -1,4 +1,3 @@
-
 const {DataSource} = require('typeorm');
 
 const dotenv = require("dotenv")
@@ -23,3 +22,4 @@ appDataSource.initialize()
     })
 
 module.exports = { appDataSource }
+
