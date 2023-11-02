@@ -26,18 +26,27 @@ const createProduct = async(req,res) =>{
     const decodedToken = await middleJwt.verifyToken(token)
     try{
         if(!productName||!price||!description||!brandId||!scentId||!imageId){
-            throw new Error("INPUT_KEY_ERROR")
+            const inputKeyError = new Error()
+            inputKeyError.statusCode = 400
+            inputKeyError.message = 'INPUT_KEY_ERROR'
+            throw inputKeyError
         }
         if(token){
-            if(decodedToken.status === 1){
+            const userType = {
+                ADMIN:1
+            }
+            if(decodedToken.status === userType.ADMIN){
                 await productService.createProduct(productName,price,description,brandId,scentId,imageId)
                 res.status(200).json({message: "successfully created"})
             }else{
-                throw new Error("Permission Denied")
+                const err = new Error()
+                err.statusCode = 401
+                err.message = "Permission Denied"
+                throw err;
             }
         }
     }catch(err){
-        res.status(404).json({message: err.message})
+        res.status(404|| statusCode).json({message: err.message})
     }
 }
 const updateProduct = async (req,res) =>{
@@ -47,11 +56,17 @@ const updateProduct = async (req,res) =>{
     const decodedToken = await middleJwt.verifyToken(token)
     try{
         if(token){
-            if(decodedToken.status === 1){
+            const userType = {
+                ADMIN:1
+            }
+            if(decodedToken.status === userType.ADMIN){
                 await productService.updateProduct(productId,productName,price,description,brandId,scentId,imageId)
                 res.status(200).json({message: "successfully updated"})
             }else{
-                throw new Error("Permission Denied")
+                const err = new Error()
+                err.statusCode = 401
+                err.message = "Permission Denied"
+                throw err;
             }
         }
     }catch(err){
@@ -64,14 +79,20 @@ const deleteProduct = async(req,res)=>{
     const decodedToken = await middleJwt.verifyToken(token)
     try{
         if(token){
-            if(decodedToken.status === 1)
+            const userType = {
+                ADMIN:1
+            }
+            if(decodedToken.status === userType.ADMIN)
             await productService.deleteProduct(id)
             res.status(204).json({message:"삭제되었습니다."})
         }else {
-            res.status(404).json({message: err.message})
+            const err = new Error()
+            err.statusCode = 401
+            err.message = "Permission Denied"
+            throw err;
         }
     }catch(err){
-        res.status(404).json({message: err.message})
+        res.status(404||statusCode).json({message: err.message})
     }
 }
 
