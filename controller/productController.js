@@ -36,14 +36,7 @@ const createProduct = async (req, res) => {
         ADMIN: 1,
       };
       if (decodedToken.status === userType.ADMIN) {
-        await productService.createProduct(
-          productName,
-          price,
-          description,
-          brandId,
-          scentId,
-          imageId
-        );
+        await productService.createProduct(productName,price,description,brandId,scentId,imageId);
         res.status(200).json({ message: "successfully created" });
       } else {
         const err = new Error();
@@ -53,7 +46,7 @@ const createProduct = async (req, res) => {
       }
     }
   } catch (err) {
-    res.status(404 || statusCode).json({ message: err.message });
+    res.status(statusCode ||404 ).json({ message: err.message });
   }
 };
 const updateProduct = async (req, res) => {
@@ -86,7 +79,7 @@ const updateProduct = async (req, res) => {
       }
     }
   } catch (err) {
-    res.status(500 || statusCode).json({ message: err.message });
+    res.status(statusCode ||500).json({ message: err.message });
   }
 };
 const deleteProduct = async (req, res) => {
@@ -108,7 +101,7 @@ const deleteProduct = async (req, res) => {
       throw err;
     }
   } catch (err) {
-    res.status(404 || statusCode).json({ message: err.message });
+    res.status(statusCode404 || 404 ).json({ message: err.message });
   }
 };
 
