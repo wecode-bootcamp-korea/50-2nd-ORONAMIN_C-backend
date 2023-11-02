@@ -1,20 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const orderController = require('../controller/orderController');
 
-
-const orderController = require('../controller/orderController')
-
-router.get('/order',orderController.busket);
-router.post('/addProduct',orderController.addProduct);
-router.post('/cutProduct',orderController.cutProduct);
-router.post('/addBusket',orderController.addBusket);
-router.post('/deleteProduct',orderController.deleteProduct);
-// router.get('/paymentBusket',orderController.paymentBusket);
-router.post('/payBusket',orderController.payBusket);
-
-
-
-
-
+router.get('/order',orderController.orderBasket);
+router.post('/productQuantity',orderController.increaseBasketQuantity);
+router.post('/userProductQuantity',orderController.decreaseBasketQuantity);
+router.post('/productBusket',orderController.createBasket);
+router.delete('/busket',orderController.deleteProduct);
+router.post('/paymentBasket',orderController.payBasket);
 module.exports = { router }
 

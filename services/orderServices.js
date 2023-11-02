@@ -1,50 +1,39 @@
-const { remainingPoints } = require('../controller/orderController');
 const orderDao = require('../models/orderDao');
 const middleErr = require('../middleware/error')
 
-const busket = async (verifiedEmail)=>{
-    const busketData = await orderDao.busket(verifiedEmail);
+const orderBasket = async (userId)=>{
+    const busketData = await orderDao.orderBasket(userId);
     return busketData
 }
 
-const addProduct = async (verifiedEmail, productId)=>{
-    const data = await orderDao.addProduct(verifiedEmail, productId);
+const increaseBasketQuantity = async (userId, productId)=>{
+    const data = await orderDao.increaseBasketQuantity(userId, productId);
     return data
 }
 
-const cutProduct = async (verifiedEmail, productId) =>{
-    const data = await orderDao.cutProduct(verifiedEmail,productId);
+const decreaseBasketQuantity = async (userId, productId) =>{
+    const data = await orderDao.decreaseBasketQuantity(userId,productId);
     return data
 }
 
-const deleteProduct = async(verifiedId, productId) =>{
-    const data = await orderDao.deleteProduct(verifiedId, productId);
+const deleteProduct = async(userId, productId) =>{
+    const data = await orderDao.deleteProduct(userId, productId);
     return data
 }
 
-const addBusket = async (verifiedUserId, product_id)=>{
-    const data = await orderDao.addBusket(verifiedUserId, product_id);
+const createBasket = async (userId, product_id)=>{
+    const data = await orderDao.createBasket(userId, product_id);
     return data
 };
 
-// const paymentBusket = async(verifiedUserId)=>{
-//     const userData = await orderDao.paymentBusket(verifiedUserId);
-//     return userData
-// }
-const payBusket = async(verifiedId, order_number,address,products, total_price)=>{
+const payBasket = async(userId, order_number,address,products, total_price)=>{
 
-    const userPoint = await orderDao.remainingPoints(verifiedId);
-
+    const userPoint = await orderDao.getPointsByUserId(userId);
     if(total_price > userPoint[0].point ){
-        middleErr.error(500, 'LOW_POINTS!')
+        middleErr.error(500, 'LACK_OF_USER_AVAILABILITY_POINTS!')
     }
-   
-
-    await orderDao.payBusket(verifiedId, order_number,address,products, total_price);
-    await orderDao.pointReduction(verifiedId, total_price)
-   
-}
-
-
-
-module.exports = {busket, addProduct,cutProduct, addBusket, deleteProduct, payBusket}
+    await orderDao.payBasket(userId, order_number,address,products, total_price);
+    await orderDao.pointReduction(userId, total_price)
+};
+module.exports = {orderBasket, increaseBasketQuantity
+    ,decreaseBasketQuantity, createBasket, deleteProduct, payBasket}
