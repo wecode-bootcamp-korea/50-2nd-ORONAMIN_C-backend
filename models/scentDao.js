@@ -7,7 +7,7 @@ const getAllScent = async () => {
     `);
 };
 //특정 향 조회
-const getScent = async (scentId) => {
+const getScentById = async (scentId) => {
   return await appDataSource.query(
     `
     SELECT * FROM scents WHERE id = ?
@@ -17,7 +17,7 @@ const getScent = async (scentId) => {
 };
 
 //특정 향 이름별 조회
-const callMeByYourName = async (scentName) => {
+const getScentByName = async (scentName) => {
   return await appDataSource.query(`SELECT * FROM scents WHERE name = ?`, [
     scentName,
   ]);
@@ -52,9 +52,9 @@ const updateScent = async (scentId, scentName, scentDesc) => {
 
 module.exports = {
   getAllScent,
-  getScent,
+  getScentById,
   createScent,
-  callMeByYourName,
+  getScentByName,
   deleteScent,
   updateScent,
 };

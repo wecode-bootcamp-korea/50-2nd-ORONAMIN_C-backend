@@ -1,49 +1,57 @@
 const { appDataSource } = require("./datasource");
 
-//프로덕트 조회
-const checkProduct = async (productId) => {
-  return await appDataSource.query(`
-  SELECT * FROM products where id = ${productId}`);
+//이미지 아이디로 이미지 조회
+const getImageById = async (imageId) => {
+  return await appDataSource.query(
+    `
+  SELECT * FROM images WHERE id = ?`,
+    [imageId]
+  );
 };
 
-//프로덕트아이디로 이미지 조회
-const getImage = async (productId) => {
-  return await appDataSource.query(`
-  SELECT * FROM images where product_id = ${productId}
-  `);
-};
-//이미지아이디로 이미지 조회
-const getImageId = async (imageId) => {
-  return await appDataSource.query(`
-  SELECT * FROM images WHERE id = ${imageId}`);
+//이미지 Desc로 이미지 조회
+const getImageByDesc = async (imageDesc) => {
+  return await appDataSource.query(
+    `
+  SELECT * FROM images WHERE image_desc = ?`,
+    [imageDesc]
+  );
 };
 
 //이미지 생성
-const createImage = async (productId, imageSource) => {
-  const result = await appDataSource.query(`
-    INSERT INTO images(product_id, image_source)
-    VALUES(${productId}, "${imageSource}")`);
+const createImage = async (imageDesc, imageSource) => {
+  const result = await appDataSource.query(
+    `
+    INSERT INTO images(image_desc, image_source)
+    VALUES(?,?)`,
+    [imageDesc, imageSource]
+  );
   console.log(result);
   return result;
 };
 
 //이미지 삭제
 const deleteImage = async (imageId) => {
-  return await appDataSource.query(`
-  DELETE FROM images where id = ${imageId}`);
+  return await appDataSource.query(
+    `
+  DELETE FROM images where id = ?`,
+    [imageId]
+  );
 };
 
 //이미지 수정
-const updateImage = async (imageId, imageSource) => {
-  return await appDataSource.query(`
-  UPDATE images SET image_source = "${imageSource}" where id = ${imageId}`);
+const updateImage = async (imageId, imageDesc, imageSource) => {
+  return await appDataSource.query(
+    `
+  UPDATE images SET image_source = ?, image_desc = ? where id = ? `,
+    [imageSource, imageDesc, imageId]
+  );
 };
 
 module.exports = {
   createImage,
-  getImage,
-  checkProduct,
+  getImageById,
+  getImageByDesc,
   deleteImage,
-  getImageId,
   updateImage,
 };

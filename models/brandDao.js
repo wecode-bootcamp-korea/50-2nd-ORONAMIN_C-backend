@@ -9,7 +9,7 @@ const getAllBrands = async () => {
 const getBrand = async (brandId) => {
   return await appDataSource.query(
     `
-    SELECT * FROM brands WHERE id = ?`,
+    SELECT id,logo,name FROM brands WHERE id = ?`,
     [brandId]
   );
 };
@@ -18,7 +18,7 @@ const getBrand = async (brandId) => {
 const getBrandByName = async (brandName) => {
   return await appDataSource.query(
     `
-    SELECT * FROM brands WHERE name =?`,
+    SELECT id,logo,name FROM brands WHERE name =? LIMIT 1`,
     [brandName]
   );
 };
