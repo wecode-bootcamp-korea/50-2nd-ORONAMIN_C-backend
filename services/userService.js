@@ -44,12 +44,7 @@ const signIn = async( userEmail, userPassword ) => {
     return token
 }
 
-const list = async() => {
-    const userList = await userDao.getUserList()
-    return userList
-}
-
-const oneList = async( token ) =>{
+const getUserInfo = async( token ) =>{
     const [ verify ] = await userDao.verifyUser( token.id, token.email, token.status )
     if(verify.length==0){
         middleErr.error(400, "EMAIL_NOT_FOUND")
@@ -105,7 +100,7 @@ const setNewPassword = async( userEmail ) => {
     const newPassword = Math.random().toString(35).slice(2)
     const hashedUserPassword = await middleHash.hash( newPassword )
 
-    await userDao.findPassword( userEmail, hashedUserPassword )
+    await userDao.setNewPassword( userEmail, hashedUserPassword )
     
     return newPassword
 }
@@ -120,8 +115,7 @@ const setNewPassword = async( userEmail ) => {
 module.exports = {
     signUp,
     signIn,
-    list,
-    oneList,
+    getUserInfo,
     addPoint,
     changeUserInfo,
     setNewPassword,
