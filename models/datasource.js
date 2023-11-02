@@ -22,4 +22,3 @@ appDataSource.initialize()
     })
 
 module.exports = { appDataSource }
-
