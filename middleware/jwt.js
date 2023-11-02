@@ -19,3 +19,4 @@ const verifyToken = async(token) => {
 }
 
 module.exports = { makeToken, verifyToken }
+
